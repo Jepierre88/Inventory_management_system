@@ -12,7 +12,6 @@ from datetime import timedelta
 # Create your views here.
 @api_view(['POST'])
 def login_view(request):
-    print(request.data)
     user = get_object_or_404(User, username=request.data.get('username'))
     if not user.check_password(request.data.get('password')):
         return Response({"error": "Invalid credentials"}, status=401)
@@ -20,7 +19,6 @@ def login_view(request):
     token, created = Token.objects.get_or_create(user=user)
     
     userSerializer = serializers.UserSerializer(instance=user)
-    print(userSerializer)
     return Response({"token": token.key, "user":userSerializer.data}, status=200)
 
 
