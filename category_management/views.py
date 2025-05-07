@@ -3,6 +3,9 @@ from rest_framework import generics
 from django.views.generic import ListView
 from .models import Category
 from .serializers import CategorySerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.status import *
 # Create your views here.
 
 class ReadCategory(generics.ListAPIView):
@@ -12,11 +15,18 @@ class ReadCategory(generics.ListAPIView):
 class UpdateCategory(generics.RetrieveUpdateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    
-class CreateCategory(generics.CreateAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
 
+@api_view(["POST"])    
+def createCategory(request):
+    serializer = CategorySerializer(data=request.data)
+    
+    if not serializer.is_valid():
+        return Response({"message":serializer.errors}, status=HTTP_400_BAD_REQUEST)
+    serializer.save()
+    return Response({
+        "message":"Category created succesfull",
+        "category":serializer.data
+    })
 class DeleteCategory(generics.DestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer

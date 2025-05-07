@@ -9,12 +9,15 @@ class Item(models.Model):
     description = models.TextField()
     category = models.ForeignKey("category_management.Category", on_delete=models.CASCADE, related_name="items")
     business = models.ForeignKey(
-        "business_management.Business",  # Relación con el modelo Business
-        on_delete=models.CASCADE,       # Si el negocio es eliminado, también se eliminan los items
-        related_name="items"            # Permite acceder a los items desde el negocio
+        "business_management.Business",
+        on_delete=models.CASCADE,
+        related_name="items"
     )
     created_on = models.DateField(auto_now_add=True)
     updated_on = models.DateField(auto_now=True)
+
+    class Meta:
+        unique_together = ('name', 'business')  # ✅ Restricción para nombre único por negocio
 
     def __str__(self) -> str:
         return self.name
